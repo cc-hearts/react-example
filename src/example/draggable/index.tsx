@@ -86,14 +86,26 @@ const DraggableLayout: pageIndex = function () {
               const tempList: number[] = []
               let i = 0
               while (i < list.length) {
-                if (i !== prevIndex && i !== nextIndex) {
+                if (i === prevIndex) {
+                  i++
+                  continue
+                }
+                // prevIndex < nextIndex 则插入到nextIndex后面
+                if (prevIndex < nextIndex) {
                   tempList.push(list[i])
+                  if (i === nextIndex) {
+                    tempList.push(Number(prevKey))
+                  }
+                  // prevIndex > nextIndex 则插入到nextIndex前面
                 } else {
-                  tempList.push(Number(i === prevIndex ? nextKey : prevKey))
-                  setList(() => tempList)
+                  if (i === nextIndex) {
+                    tempList.push(Number(prevKey))
+                  }
+                  tempList.push(list[i])
                 }
                 i++
               }
+              setList(() => tempList)
             }
           }}
           data-value={value}
