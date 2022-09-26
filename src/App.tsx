@@ -1,6 +1,6 @@
 import type { pageIndex } from '../types/types'
 import styled from 'styled-components'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 const Title = styled.h1`
   font-size: 1.5em;
   text-align: center;
@@ -8,6 +8,7 @@ const Title = styled.h1`
 `
 export default function App() {
   // 导入首页
+
   const [indexList, setIndexList] = useState<pageIndex[]>([])
   useEffect(() => {
     const modules = import.meta.glob('./example/**/index.(ts|tsx|js|jsx)')
@@ -19,7 +20,7 @@ export default function App() {
     })
   }, [])
   return (
-    <>
+    <React.Fragment>
       {indexList.map((Children, index) => {
         return (
           <Title key={index}>
@@ -27,6 +28,6 @@ export default function App() {
           </Title>
         )
       })}
-    </>
+    </React.Fragment>
   )
 }

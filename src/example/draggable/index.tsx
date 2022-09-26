@@ -16,10 +16,8 @@ const GardLayoutItem = styled.div`
   text-align: center;
   line-height: 100px;
   user-select: none;
-  transition: all 0.1s ease-in;
+  transform: translate3d(0, 0, 0);
 `
-
-// TODO: 动画效果未添加
 
 const DraggableLayout: pageIndex = function () {
   const nodeRef = useRef<HTMLDivElement | null>(null)
@@ -34,7 +32,8 @@ const DraggableLayout: pageIndex = function () {
       draggableNode.current.remove()
     }
     draggableNode.current = null
-  }, [])
+    setConfig(() => ({ currentLeft: 0, currentTop: 0, currentX: 0, currentY: 0 }))
+  }, [setConfig])
   return (
     <GardLayout
       onPointerMove={(e) => {
@@ -52,11 +51,12 @@ const DraggableLayout: pageIndex = function () {
         }
         const newNode = draggableNode.current
         newNode.style.position = 'absolute'
-        ;(newNode.style.top = config.currentTop + (e.clientY - config.currentY) + 'px'),
-          (newNode.style.left = config.currentLeft + (e.clientX - config.currentX) + 'px')
+        newNode.style.top = '0px'
+        newNode.style.left = '0px'
+        newNode.style.transform = `translate3d(
+          ${config.currentLeft + (e.clientX - config.currentX)}px,${config.currentTop + (e.clientY - config.currentY)}px,0`
         newNode.style.pointerEvents = 'none'
         document.body.appendChild(newNode)
-        // 克隆一份组件 然后移动位置
       }}
       onPointerUp={clearEffect}
       onPointerLeave={clearEffect}
@@ -69,8 +69,8 @@ const DraggableLayout: pageIndex = function () {
           }}
           onPointerOver={(e) => {
             const newNode = draggableNode.current
-            if (!newNode) return
             const node = e.target as HTMLDivElement
+            if (!newNode) return
             const prevKey = newNode.getAttribute('data-value')!
             const nextKey = node.getAttribute('data-value')!
             if (newNode && prevKey !== nextKey) {
@@ -90,10 +90,10 @@ const DraggableLayout: pageIndex = function () {
                   tempList.push(list[i])
                 } else {
                   tempList.push(Number(i === prevIndex ? nextKey : prevKey))
+                  setList(() => tempList)
                 }
                 i++
               }
-              setList(() => tempList)
             }
           }}
           data-value={value}
